@@ -12,12 +12,12 @@ const zod = require('zod')
 //   }
 
 const createTodo = zod.object({
-    title:string(),
-    desc:string()
+    title:zod.string(),
+    desc:zod.string()
 })
 
 const completeTodo = zod.object({
-    id:string()
+    id:zod.string()
 })
 
 module.exports = {

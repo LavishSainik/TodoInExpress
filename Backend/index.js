@@ -1,8 +1,12 @@
 const express = require('express')
 const {createTodo,completeTodo}  = require("./types")
 const { todo } = require('./db')
+const cors = require("cors")
 const app = express()
 
+app.use(cors({
+    origin: "http://localhost:5173"
+}))
 app.use(express.json())
 app.get("/getTodo",async(req,res)=>{
     const todoList =await todo.find({});
