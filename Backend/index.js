@@ -1,10 +1,14 @@
 const express = require('express')
 const {createTodo,completeTodo}  = require("./types")
+const { todo } = require('./db')
 const app = express()
 
 app.use(express.json())
-app.get("/getTodo",(req,res)=>{
-    res.json
+app.get("/getTodo",async(req,res)=>{
+    const todoList =await todo.find({});
+    res.send({
+        todoList
+    })
 })
 
 // body
@@ -12,7 +16,7 @@ app.get("/getTodo",(req,res)=>{
 //  desc:string
 // }
 
-app.post("/addTodo",(req,res)=>{
+app.post("/addTodo",async(req,res)=>{
     const createPayload = req.body;
     const paresdBody = createTodo.safeParse(createPayload);
     if(!paresdBody.success){
@@ -22,9 +26,18 @@ app.post("/addTodo",(req,res)=>{
         return;
     }
     //put it in mongodb
+    await todo.create({
+        title:createPayload.title,
+        desc:createPayload.desc,
+        completed:false
+    })
+
+    res.json({
+        msg:"Todo created!!"
+    })
 })
 
-app.put("/completed",(req,res)=>{
+app.put("/completed",async(req,res)=>{
     const payload = req.body
     const paresdPayload = completeTodo.safeParse(payload);
     if(!paresdPayload){
@@ -32,7 +45,15 @@ app.put("/completed",(req,res)=>{
             msg:"Something went wrong"
         })
     }
-    return;
+     await todo.update({
+        _id:payload.id
+     },{
+        completed:true
+     })
+
+     res.json({
+        msg:"todo marked as completed!"
+     })
 })
 
 
